@@ -1,0 +1,16 @@
+I want Spring boot Application Web App with H2 Database. create parent child maven module  
+create folder for application which perfome like below.
+
+API should create throught OPEN API Spec 3.0 
+
+User can do registration with email id and password. if email id is already regestired then move to login page and send message " User already registred" 
+
+Validate Email Id and password if it is failed then send message. 
+
+Once User registred can update/get their details but can't access for other user. 
+
+Once User Registed can move create Account Alias Page and user can create an account alias, account alias will be unqiune in the entries system. user can update status and get details and delete account alias. 
+
+
+
+https://temp-mail.org/en/view/68bd644cfb1fa6001226d13f
