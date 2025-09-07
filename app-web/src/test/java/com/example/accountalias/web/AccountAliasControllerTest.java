@@ -1,0 +1,57 @@
+package com.example.accountalias.web;
+
+import com.example.accountalias.web.dto.AliasDtos;
+import com.example.accountalias.web.dto.AuthDtos;
+import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.web.client.TestRestTemplate;
+import org.springframework.boot.test.web.server.LocalServerPort;
+import org.springframework.http.*;
+
+import static org.assertj.core.api.Assertions.assertThat;
+
+@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+class AccountAliasControllerTest {
+
+    @LocalServerPort
+    private int port;
+
+    @Autowired
+    private TestRestTemplate rest;
+
+    private String url(String path) { return "http://localhost:" + port + path; }
+
+    @Test
+    void alias_crud_positive_and_negative() {
+        rest.postForEntity(url("/api/auth/register"), new AuthDtos.RegisterRequest("alias@example.com", "Password1!"), String.class);
+        TestRestTemplate auth = rest.withBasicAuth("alias@example.com", "Password1!");
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+        HttpEntity<AliasDtos.CreateAliasRequest> createReq = new HttpEntity<>(new AliasDtos.CreateAliasRequest("unique-alias"), headers);
+        ResponseEntity<AliasDtos.AliasResponse> created = auth.exchange(url("/api/aliases"), HttpMethod.POST, createReq, AliasDtos.AliasResponse.class);
+        assertThat(created.getStatusCode()).isEqualTo(HttpStatus.OK);
+        Long id = created.getBody().id();
+
+        HttpEntity<AliasDtos.CreateAliasRequest> duplicateReq = new HttpEntity<>(new AliasDtos.CreateAliasRequest("unique-alias"), headers);
+        ResponseEntity<String> duplicate = auth.exchange(url("/api/aliases"), HttpMethod.POST, duplicateReq, String.class);
+        assertThat(duplicate.getStatusCode()).isIn(HttpStatus.CONFLICT, HttpStatus.BAD_REQUEST);
+
+        ResponseEntity<String> list = auth.getForEntity(url("/api/aliases"), String.class);
+        assertThat(list.getStatusCode()).isEqualTo(HttpStatus.OK);
+        assertThat(list.getBody()).contains("unique-alias");
+
+        HttpEntity<AliasDtos.UpdateAliasStatusRequest> req = new HttpEntity<>(new AliasDtos.UpdateAliasStatusRequest(false), headers);
+        ResponseEntity<String> updated = auth.exchange(url("/api/aliases/" + id + "/status"), HttpMethod.PUT, req, String.class);
+        assertThat(updated.getStatusCode()).isEqualTo(HttpStatus.OK);
+
+        ResponseEntity<Void> deleted = auth.exchange(url("/api/aliases/" + id), HttpMethod.DELETE, null, Void.class);
+        assertThat(deleted.getStatusCode()).isEqualTo(HttpStatus.NO_CONTENT);
+
+        ResponseEntity<String> notFound = auth.exchange(url("/api/aliases/" + id), HttpMethod.DELETE, null, String.class);
+        assertThat(notFound.getStatusCode().is4xxClientError()).isTrue();
+    }
+}
+
+

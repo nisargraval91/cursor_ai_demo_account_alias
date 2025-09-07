@@ -1,0 +1,11 @@
+C:\account-alias-app\app-web\src\main\java\com\example\accountalias\web\AccountAliasApplication.java
+C:\account-alias-app\app-web\src\main\java\com\example\accountalias\web\config\OpenApiConfig.java
+C:\account-alias-app\app-web\src\main\java\com\example\accountalias\web\config\SecurityConfig.java
+C:\account-alias-app\app-web\src\main\java\com\example\accountalias\web\controller\AccountAliasController.java
+C:\account-alias-app\app-web\src\main\java\com\example\accountalias\web\controller\AuthController.java
+C:\account-alias-app\app-web\src\main\java\com\example\accountalias\web\controller\UserController.java
+C:\account-alias-app\app-web\src\main\java\com\example\accountalias\web\dto\AliasDtos.java
+C:\account-alias-app\app-web\src\main\java\com\example\accountalias\web\dto\AuthDtos.java
+C:\account-alias-app\app-web\src\main\java\com\example\accountalias\web\exception\GlobalExceptionHandler.java
+C:\account-alias-app\app-web\src\main\java\com\example\accountalias\web\service\AccountAliasService.java
+C:\account-alias-app\app-web\src\main\java\com\example\accountalias\web\service\UserService.java

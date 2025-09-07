@@ -1,0 +1,61 @@
+package com.example.accountalias.web.controller;
+
+import com.example.accountalias.domain.User;
+import com.example.accountalias.web.dto.AliasDtos;
+import com.example.accountalias.web.service.AccountAliasService;
+import com.example.accountalias.web.service.UserService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+
+@RestController
+@RequestMapping("/api/aliases")
+@Tag(name = "Account Aliases")
+public class AccountAliasController {
+    private final AccountAliasService aliasService;
+    private final UserService userService;
+
+    public AccountAliasController(AccountAliasService aliasService, UserService userService) {
+        this.aliasService = aliasService;
+        this.userService = userService;
+    }
+
+    @Operation(summary = "Create a new account alias (unique)")
+    @PostMapping
+    public ResponseEntity<AliasDtos.AliasResponse> create(@AuthenticationPrincipal UserDetails principal,
+                                                          @RequestBody @Valid AliasDtos.CreateAliasRequest request) {
+        User owner = userService.findByEmail(principal.getUsername()).orElseThrow();
+        return ResponseEntity.ok(aliasService.createAlias(owner, request));
+    }
+
+    @Operation(summary = "List my aliases")
+    @GetMapping
+    public ResponseEntity<List<AliasDtos.AliasResponse>> list(@AuthenticationPrincipal UserDetails principal) {
+        User owner = userService.findByEmail(principal.getUsername()).orElseThrow();
+        return ResponseEntity.ok(aliasService.listAliases(owner));
+    }
+
+    @Operation(summary = "Update alias status")
+    @PutMapping("/{id}/status")
+    public ResponseEntity<AliasDtos.AliasResponse> updateStatus(@AuthenticationPrincipal UserDetails principal,
+                                                                @PathVariable Long id,
+                                                                @RequestBody @Valid AliasDtos.UpdateAliasStatusRequest request) {
+        User owner = userService.findByEmail(principal.getUsername()).orElseThrow();
+        return ResponseEntity.ok(aliasService.updateStatus(owner, id, request.active()));
+    }
+
+    @Operation(summary = "Delete alias")
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> delete(@AuthenticationPrincipal UserDetails principal, @PathVariable Long id) {
+        User owner = userService.findByEmail(principal.getUsername()).orElseThrow();
+        aliasService.delete(owner, id);
+        return ResponseEntity.noContent().build();
+    }
+}
+
