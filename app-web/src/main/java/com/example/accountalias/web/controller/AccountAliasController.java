@@ -44,7 +44,7 @@ public class AccountAliasController {
     @Operation(summary = "Update alias status")
     @PutMapping("/{id}/status")
     public ResponseEntity<AliasDtos.AliasResponse> updateStatus(@AuthenticationPrincipal UserDetails principal,
-                                                                @PathVariable Long id,
+                                                                @PathVariable("id") Long id,
                                                                 @RequestBody @Valid AliasDtos.UpdateAliasStatusRequest request) {
         User owner = userService.findByEmail(principal.getUsername()).orElseThrow();
         return ResponseEntity.ok(aliasService.updateStatus(owner, id, request.active()));
@@ -52,7 +52,7 @@ public class AccountAliasController {
 
     @Operation(summary = "Delete alias")
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> delete(@AuthenticationPrincipal UserDetails principal, @PathVariable Long id) {
+    public ResponseEntity<Void> delete(@AuthenticationPrincipal UserDetails principal, @PathVariable("id") Long id) {
         User owner = userService.findByEmail(principal.getUsername()).orElseThrow();
         aliasService.delete(owner, id);
         return ResponseEntity.noContent().build();

@@ -1,4 +1,4 @@
-com\example\accountalias\domain\User.class
-com\example\accountalias\repository\AccountAliasRepository.class
-com\example\accountalias\domain\AccountAlias.class
-com\example\accountalias\repository\UserRepository.class
+com/example/accountalias/domain/AccountAlias.class
+com/example/accountalias/repository/AccountAliasRepository.class
+com/example/accountalias/repository/UserRepository.class
+com/example/accountalias/domain/User.class
